@@ -1,0 +1,7 @@
+com\zhuyiwen\hgshop\controller\FileUpload.class
+com\zhuyiwen\hgshop\controller\CategoryController.class
+com\zhuyiwen\hgshop\controller\IndexController.class
+com\zhuyiwen\hgshop\controller\SkuController.class
+com\zhuyiwen\hgshop\controller\SpuController.class
+com\zhuyiwen\hgshop\controller\SpecController.class
+com\zhuyiwen\hgshop\controller\BrandController.class

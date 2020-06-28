@@ -1,0 +1,11 @@
+com\zhuyiwen\hgshop\dao\BrandDao.class
+com\zhuyiwen\hgshop\dao\SpecDao.class
+com\zhuyiwen\hgshop\dao\CategoryDao.class
+com\zhuyiwen\hgshop\Bootstart.class
+com\zhuyiwen\hgshop\dao\SkuDao.class
+com\zhuyiwen\hgshop\service\impl\SkuServiceImpl.class
+com\zhuyiwen\hgshop\service\impl\SpecServiceImpl.class
+com\zhuyiwen\hgshop\dao\SpuDao.class
+com\zhuyiwen\hgshop\service\impl\SpuServiceImpl.class
+com\zhuyiwen\hgshop\service\impl\CategoryServiceImpl.class
+com\zhuyiwen\hgshop\service\impl\BrandServiceImpl.class

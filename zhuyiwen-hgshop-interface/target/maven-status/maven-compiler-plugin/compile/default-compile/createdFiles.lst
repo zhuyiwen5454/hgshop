@@ -1,0 +1,14 @@
+com\zhuyiwen\hgshop\pojo\Spec.class
+com\zhuyiwen\hgshop\pojo\Spu.class
+com\zhuyiwen\hgshop\service\SpuService.class
+com\zhuyiwen\hgshop\service\CategoryService.class
+com\zhuyiwen\hgshop\pojo\SpuVo.class
+com\zhuyiwen\hgshop\service\SpecService.class
+com\zhuyiwen\hgshop\service\SkuService.class
+com\zhuyiwen\hgshop\pojo\Sku.class
+com\zhuyiwen\hgshop\pojo\Brand.class
+com\zhuyiwen\hgshop\pojo\SpecOption.class
+com\zhuyiwen\hgshop\service\BrandService.class
+com\zhuyiwen\hgshop\pojo\SpuEs.class
+com\zhuyiwen\hgshop\pojo\Category.class
+com\zhuyiwen\hgshop\pojo\SkuVo.class

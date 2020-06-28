@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuyiwen.hgshop.dao.BrandDao">
+<!-- List<Brand> list(); -->
+	<select id="list" resultType="brand">
+			SELECT id,name,first_char AS  firstChar,deleted_flag AS deletedFlag 
+			FROM hg_brand ORDER BY name ASC
+	</select>
+	
+	<select id="findById" resultType="brand">
+		SELECT id,name,first_char AS  firstChar,deleted_flag AS deletedFlag 
+			FROM hg_brand 
+			WHERE id=#{value}
+	</select>
+</mapper>
