@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuyiwen.hgshop.dao.SpecDao">
+
+	<!-- 顺序的问题 
+		1。 id  2. result 3. assioation 4. conllection  
+	-->
+	
+	
+	<resultMap type="spec" id="specMapper">
+		<id column="id" property="id"/>
+		<result column="spec_name" property="specName"/>
+		<collection property="optionList" column="id" select="listBySpecId"></collection>
+	</resultMap>
+	
+	<select id="listBySpecId" resultType="SpecOption" >
+		SELECT id as optionId,option_name as optionName,spec_id as specId,orders FROM hg_spec_option WHERE spec_id=#{value}
+	</select>
+	
+	<!-- int deleteSpecOptions(int ...ids); -->
+	<delete id="deleteSpecOptions">
+		DELETE FROM hg_spec_option WHERE spec_id IN 
+		<foreach collection="array" open="(" close=")" separator="," item="specId">#{specId}</foreach>
+	</delete>
+	<!-- int deleteSpec(int[] ids); -->
+	<delete id="deleteSpec">
+		DELETE FROM hg_spec WHERE id IN 
+		<foreach collection="array" open="(" close=")" separator="," item="specId">#{specId}</foreach>
+	</delete>
+	
+
+	<!-- int addSpec(Spec spec); -->
+	<insert id="addSpec" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO hg_spec(spec_name) VALUES(#{specName})
+	</insert>
+
+	<!-- int addSpecOption(SpecOption specOption); -->
+	<insert id="addSpecOption" > 
+		INSERT INTO hg_spec_option(option_name,spec_id,orders) VALUES(#{optionName},#{specId},#{orders})
+	</insert>
+
+	<!-- int update(Spec spec); -->
+	<update id="update" >
+		UPDATE hg_spec SET spec_name=#{specName}
+		WHERE id=#{id}
+	</update>
+	
+	<!-- Spec getById(int id); -->
+	<select id="getById" resultMap="specMapper">
+		SELECT * FROM hg_spec WHERE id=#{value}
+	</select>
+
+	<!-- List<Spec> list(String name); -->
+	<select id="list" resultMap="specMapper">
+		SELECT * FROM hg_spec WHERE spec_name like concat('%',#{value},'%')
+	</select>
+	
+	<select id="listNames" resultType="spec">
+		SELECT id,spec_name AS specName from hg_spec 
+			ORDER BY spec_name ASC
+	</select>
+	
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuyiwen.hgshop.dao.CategoryDao">
+	
+	<resultMap type="Category" id="CatMapper">
+		<id column="id" property="id"></id>
+		<result column="parent_id" property="parentId"/>
+		<result column="name" property="name"/>
+		<result column="path" property="path"/>
+		<collection column="id" property="children" select="listByParentId" />
+	</resultMap>
+	
+	<!-- List<Category> listByParentId(int parentId); -->
+	<select id="listByParentId" resultMap="CatMapper">
+		SELECT * FROM hg_category WHERE parent_id = #{value}
+	</select>
+	
+	<!-- 	int add(Category cat); -->
+	<insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO hg_category(parent_id,name,path) VALUES(#{parentId},#{name},#{path})
+	</insert>
+	
+	<!-- int update(Category cat); -->
+	<update id="update">
+		UPDATE hg_category  SET 
+			<if test="parentId!=null and parentId!=0 ">parent_id=#{parentId},</if>
+			name=#{name},path=#{path} WHERE id=#{id}
+	</update>
+
+	<!-- int delete(int id); -->
+	<delete id="delete">
+		DELETE FROM hg_category WHERE id=#{value}
+	</delete>
+	
+	<!-- 这里给spu 使用的，需要在dao的接口中编写对应的方法 -->
+	<select id="findById" resultType="category">
+		SELECT id,parent_id as parentId,name,path
+			FROM hg_category
+			WHERE id=#{value}
+	</select>
+	
+</mapper>

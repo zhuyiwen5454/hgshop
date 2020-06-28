@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuyiwen.hgshop.dao.SkuDao">
+
+<resultMap type="sku" id="baseSkuMap" >
+	<id column="id" property="id"></id>
+	 <result column="title" property="title"/>
+	<result column="sell_point" property="sellPoint"/>
+	<result column="price" property="price"/>
+	<result column="stock_count" property="stockCount"/>
+	<result column="image" property="image"/>
+	<result column="create_time" property="createTime"/>
+	<result column="update_time" property="updateTime"/>
+	<result column="cost_price" property="costPrice"/>
+	<result column="market_price" property="marketPrice"/>
+	<result column="cart_thumbnail" property="cartThumbnail"/>
+	<result column="spu_id" property="spuId"/> 
+</resultMap>
+
+<resultMap type="sku" id="skuMap" extends="baseSkuMap" >
+	<association property="spu" column="spu_id" select="com.zhuyiwen.hgshop.dao.SpuDao.getById"></association> 
+</resultMap>
+
+<resultMap type="sku" id="skuMapOption" extends="baseSkuMap" >
+	<collection property="optionList" column="id" select="listOptionsBySkuId"></collection>
+</resultMap>
+
+<select id="listOptionsBySkuId" resultType="SpecOption">
+	select ss.spec_option_id as optionId,so.option_name as optionName,ss.spec_id as specId, s.spec_name as specName   
+		   from hg_sku_spec ss 
+		   LEFT JOIN hg_spec s ON s.id=ss.spec_id 
+           LEFT JOIN hg_spec_option so  ON so.id=ss.spec_option_id
+           WHERE ss.sku_id=#{value}
+</select>
+
+
+<!-- 	int add(Sku sku); -->
+<insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+	INSERT INTO hg_sku(title,sell_point,price,stock_count,barcode,
+		image,status,create_time,update_time,cost_price,
+		market_price,spu_id,cart_thumbnail)
+	VALUES(#{title},#{sellPoint},#{price},#{stockCount},#{barcode},
+		#{image},#{status},now(),now(),#{costPrice},
+		#{marketPrice},#{spuId},#{cartThumbnail})
+</insert>
+
+<!-- sku_id	sku表的主键id
+spec_id	规格表的主键id
+spec_option_id	规格属性值表的主键id
+ -->
+
+<!-- 	int addOption(@Param("skuId") Integer id, @Param("option") SpecOption specOption); -->
+<insert id="addOption">
+	INSERT INTO hg_sku_spec(sku_id,spec_id,spec_option_id)
+		VALUES(#{skuId},#{option.specId},#{option.optionId})
+</insert>
+
+<!-- 	int delBatch(int[] ids); -->
+<delete id="delBatch">
+	delete from hg_sku where id in 
+	<foreach collection="array" open="(" close=")" separator="," item="skuId" >#{skuId}</foreach>
+</delete>
+
+<!-- 	int delBatchOptions(int ...ids); -->
+<delete id="delBatchOptions">
+	delete from hg_sku_spec where sku_id in 
+	<foreach collection="array" open="(" close=")" separator="," item="skuId" >#{skuId}</foreach>
+</delete>
+
+<!-- 	int update(Sku sku); -->
+
+<!-- 	List<Sku> list(SkuVo skuVo); -->
+<!-- 	&lt; less than 
+	//查询的关键字  -->
+	<select id="list" resultMap="skuMap">
+		select * from hg_sku 
+		<where>
+			<!-- 关键字 -->
+			<if test="searchKey!=null and searchKey != ''">
+				AND (title like concat('%',#{searchKey},'%')   or  sell_point like concat('%',#{searchKey},'%')  )
+			</if>
+			<if test="stockCountMax!=0">
+				AND stock_count &lt;= #{stockCountMax}
+			</if>
+			<if test="stockCountMin!=0">
+				AND stock_count &gt;= #{stockCountMin}
+			</if>
+			
+			<if test="priceMax!=null and priceMax!=0 ">
+				AND price &lt;= #{priceMax}
+			</if>
+			<if test="priceMin!=null and priceMin!=0 ">
+				AND price &gt;= #{priceMin}
+			</if>
+			
+			<if test="costPriceMax!=null and costPriceMax!=0 ">
+				AND cost_price &lt;= #{costPriceMax}
+			</if>
+			<if test="costPriceMin!=null and costPriceMin!=0 ">
+				AND cost_price &gt;= #{costPriceMin}
+			</if>
+			
+			<if test="updateTimeMin!=null">
+				AND update_time &gt;= #{updateTimeMin}
+			</if>  
+			<if test="updateTimeMax!=null">
+				AND update_time &lt;= #{updateTimeMax}
+			</if>
+			<if test="haveImage==1">
+				<!-- 有图 -->
+				AND (image is not null and image!='' and cart_thumbnail is not null and cart_thumbnail!='') 
+			</if>
+			<if test="haveImage==2">
+				<!-- 无图 -->
+				AND (image is null or image='' or cart_thumbnail is null or cart_thumbnail='') 
+			</if>
+		</where>
+		ORDER BY ${sortField} ${sortType}
+	</select>
+	
+	<!-- List<Sku> listBySpuId(int spuId); -->
+	<select id="listBySpuId" resultMap="skuMapOption">
+		select * from hg_sku WHERE spu_id = #{value}
+	</select>
+
+<!-- 	Sku getById(int id); -->
+</mapper>

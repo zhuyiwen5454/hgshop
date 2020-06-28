@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuyiwen.hgshop.dao.SpuDao">
+	<!-- 	int add(Spu spu); -->
+	<!-- id	主键id
+goods_name	商品名称
+is_marketable	是否上架
+brand_id	品牌的主键id
+caption	标题
+category_id	分类的id
+small_pic	小图
+	 -->
+<resultMap type="Spu" id="SpuMap">
+	<id column="id" property="id"/>
+	<result column="goods_name" property="goodsName"/>
+	<result column="is_marketable" property="isMarketable"/>
+	<result column="brand_id" property="brandId"/>
+	<result column="category_id" property="categoryId"/>
+	<result column="caption" property="caption"/>	
+	<result column="small_pic" property="smallPic"/>
+	<association property="brand" column="brand_id" select="com.zhuyiwen.hgshop.dao.BrandDao.findById"></association>
+	<association property="category" column="category_id" select="com.zhuyiwen.hgshop.dao.CategoryDao.findById"></association>
+</resultMap>	 
+	 
+<insert id="add" useGeneratedKeys="true" keyColumn="id" keyProperty="id">
+		INSERT INTO hg_spu(goods_name,is_marketable,brand_id,caption,category_id,small_pic)
+		VALUES(#{goodsName},#{isMarketable},#{brandId},#{caption},#{categoryId},#{smallPic})
+</insert>
+
+	<!-- 	int delBatch(int[] ids); -->
+<delete id="delBatch">
+	DELETE FROM hg_spu WHERE id in 
+	  <foreach collection="array" item="id" open="("  close=")" separator=",">
+		#{id}
+	 </foreach>
+</delete>	
+
+<!-- int update(Spu spu); -->
+	<update id="update">
+		UPDATE hg_spu SET goods_name=#{goodsName},is_marketable=#{isMarketable},brand_id=#{brandId},
+			caption=#{caption},category_id=#{categoryId}
+			<if test="smallPic!=null">
+				,small_pic=#{smallPic}
+			</if>
+		WHERE id=#{id}
+	</update>
+	
+	<!-- Spu getById(int id); -->
+	<select id="getById" resultMap="SpuMap">
+		SELECT * FROM hg_spu WHERE id=#{value}
+	</select>	
+	<!-- List<Spu> list(SpuVo spuVo); -->
+	<select id="list" resultMap="SpuMap">
+		SELECT * FROM hg_spu
+		<where>
+			<if test="searchKey!=null and searchKey!=''">
+				AND ( caption LIKE CONCAT('%',#{searchKey},'%') OR goods_name LIKE CONCAT('%',#{searchKey},'%') )
+			</if>
+			<if test="brandId!=null and brandId!=0">
+				AND brand_id=#{brandId}
+			</if>
+			<if test="categoryId!=null and categoryId!=''">
+				AND category_id=#{categoryId}
+			</if>
+		</where>
+		ORDER BY ${sortField} ${sortType}
+	</select>
+	<delete id="del" parameterType="int">
+		delete from hg_spu where id = #{id};
+	</delete>
+</mapper>

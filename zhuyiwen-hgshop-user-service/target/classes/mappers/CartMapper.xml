@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zhuyiwen.hgshop.dao.CartDao">
+	
+	<resultMap type="cart" id="cartMap" autoMapping="true">
+		<id column="id" property="id"></id>
+		<association property="sku" column="skuid" select="findSku"></association>
+	</resultMap>
+	
+	<select id="findSku" resultType="sku">
+		SELECT id,title,price,image,cart_thumbnail AS cartThumbnail FROM hg_sku WHERE id=#{value}
+	</select>
+
+	<!-- 	int add(Cart cart); -->
+	<insert id="add">
+		INSERT INTO hg_cart(uid,skuid,pnum,createtime,updatetime)
+			VALUES(#{uid},#{skuid},#{pnum},NOW(),NOW())
+	</insert>
+	
+	<!-- int delete(int[] cartIds); -->
+	<delete id="delete">
+		DELETE FROM hg_cart WHERE id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">#{id}</foreach>
+	</delete>
+	
+	<!-- List<Cart> list(int uid); -->
+	<select id="list" resultMap="cartMap">
+		SELECT * FROM hg_cart WHERE uid=#{value}
+	</select>
+	
+	<!-- List<Cart> listByIds(int[] cartIds); -->
+	<select id="listByIds" resultMap="cartMap">
+		SELECT * FROM hg_cart WHERE id in
+		<foreach collection="array" item="id" open="(" close=")" separator=",">#{id}</foreach>
+	</select>
+	
+</mapper>
